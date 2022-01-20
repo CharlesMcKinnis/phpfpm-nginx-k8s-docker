@@ -1,0 +1,38 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: phpfpm-nginx-example-raj
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: phpfpm-nginx-example-raj
+  template:
+    metadata:
+      labels:
+        app: phpfpm-nginx-example-raj
+    spec:
+      volumes:
+        - name: shared-files
+          emptyDir: {}
+        - name: nginx-config-volume
+          configMap:
+            name: nginx-config
+      containers:
+        - image: revantine/my-php-app:1.0.0
+          name: app
+          volumeMounts:
+            - name: shared-files
+              mountPath: /var/www/html
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/sh", "-c", "cp -r /app/. /var/www/html"]
+        - image: nginx
+          name: nginx
+          volumeMounts:
+            - name: shared-files
+              mountPath: /var/www/html
+            - name: nginx-config-volume
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf

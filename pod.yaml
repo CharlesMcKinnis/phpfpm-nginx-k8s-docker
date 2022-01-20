@@ -40,7 +40,8 @@ spec:
     
     # Our nginx container, which uses the configuration declared above,
     # along with the files shared with the PHP-FPM app.
-    - image: nginx:1.7.9
+    # - image: nginx:1.7.9
+    - image: nginx
       name: nginx
       volumeMounts:
         - name: shared-files
